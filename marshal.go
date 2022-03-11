@@ -17,7 +17,8 @@ func extMarshaler(ext string) (Marshaler, error) {
 		return TOMLMarshaler{}, nil
 	case "json":
 		return JSONMarshaler{}, nil
-	default:
-		return nil, fmt.Errorf("error: gophig does not support the file extension '%s' at the moment", ext)
+	case "yaml":
+		return YAMLMarshaler{}, nil
 	}
+	return nil, fmt.Errorf("error: gophig does not support the file extension '%s' at the moment", ext)
 }
