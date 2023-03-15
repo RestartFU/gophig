@@ -1,4 +1,4 @@
-module github.com/pragu3/gophig
+module github.com/restartfu/gophig
 
 go 1.19
 
