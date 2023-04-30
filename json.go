@@ -1,8 +1,8 @@
 package gophig
 
-import "encoding/json"
+import "github.com/goccy/go-json"
 
-// JSONMarshaler is a Marshaler that uses the standard library's json package.
+// JSONMarshaler is a Marshaler that uses the goccy/go-json package.
 type JSONMarshaler struct{}
 
 // Marshal ...

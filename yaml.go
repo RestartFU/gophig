@@ -1,7 +1,7 @@
 package gophig
 
 import (
-	"github.com/go-yaml/yaml"
+	"gopkg.in/yaml.v3"
 )
 
 // YAMLMarshaler is a Marshaler that uses the go-yaml/yaml package.

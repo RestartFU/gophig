@@ -1,7 +1,7 @@
 package gophig
 
 import (
-	"github.com/pelletier/go-toml"
+	"github.com/pelletier/go-toml/v2"
 )
 
 // TOMLMarshaler is a Marshaler that uses the pelletier/go-toml package.
