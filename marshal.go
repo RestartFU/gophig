@@ -15,7 +15,7 @@ func (e UnsupportedExtensionError) Error() string {
 	return fmt.Sprintf("error: gophig does not support the file extension '%s' at the moment", e.extension)
 }
 
-// IsUnsupportedExtensionError returns true if the error is an UnsupportedExtensionError.
+// IsUnsupportedExtensionErr returns true if the error is an UnsupportedExtensionError.
 func IsUnsupportedExtensionErr(err error) bool {
 	_, ok := err.(UnsupportedExtensionError)
 	return ok
