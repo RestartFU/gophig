@@ -3,10 +3,15 @@ package gophig
 import "github.com/goccy/go-json"
 
 // JSONMarshaler is a Marshaler that uses the goccy/go-json package.
-type JSONMarshaler struct{}
+type JSONMarshaler struct {
+	Indent bool
+}
 
 // Marshal ...
-func (JSONMarshaler) Marshal(v interface{}) ([]byte, error) {
+func (m JSONMarshaler) Marshal(v interface{}) ([]byte, error) {
+	if m.Indent {
+		return json.MarshalIndent(v, "", "\t")
+	}
 	return json.Marshal(v)
 }
 
