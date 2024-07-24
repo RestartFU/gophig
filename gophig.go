@@ -6,33 +6,26 @@ import (
 
 // Gophig is a struct that contains the name, extension, and permission of a configuration file.
 type Gophig struct {
-	Name, Extension string
-	Perm            fs.FileMode
+	name      string
+	marshaler Marshaler
+	perm      fs.FileMode
 }
 
 // NewGophig returns a new Gophig struct.
-func NewGophig(name, extension string, perm fs.FileMode) *Gophig {
+func NewGophig(name string, marshaler Marshaler, perm fs.FileMode) *Gophig {
 	return &Gophig{
-		Name:      name,
-		Extension: extension,
-		Perm:      perm,
+		name:      name,
+		marshaler: marshaler,
+		perm:      perm,
 	}
 }
 
 // SetConf saves the given interface to the configuration file.
-func (gophig *Gophig) SetConf(v interface{}) error {
-	marshaler, err := extMarshaler(gophig.Extension)
-	if err != nil {
-		return err
-	}
-	return SetConfComplex(gophig.Name+"."+gophig.Extension, marshaler, v, gophig.Perm)
+func (g *Gophig) SetConf(v interface{}) error {
+	return SetConfComplex(g.name, g.marshaler, v, g.perm)
 }
 
 // GetConf loads the configuration file into the given interface.
-func (gophig *Gophig) GetConf(v interface{}) error {
-	marshaler, err := extMarshaler(gophig.Extension)
-	if err != nil {
-		return err
-	}
-	return GetConfComplex(gophig.Name+"."+gophig.Extension, marshaler, v)
+func (g *Gophig) GetConf(v interface{}) error {
+	return GetConfComplex(g.name, g.marshaler, v)
 }

@@ -27,8 +27,8 @@ type Marshaler interface {
 	Unmarshal(data []byte, v interface{}) error
 }
 
-// extMarshaler is a Marshaler that uses a file extension to determine which Marshaler to use.
-func extMarshaler(ext string) (Marshaler, error) {
+// MarshalerFromExtension is a Marshaler that uses a file extension to determine which Marshaler to use.
+func MarshalerFromExtension(ext string) (Marshaler, error) {
 	ext = strings.ToLower(ext)
 	switch ext {
 	case "toml":
