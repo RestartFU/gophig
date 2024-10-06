@@ -8,6 +8,37 @@ import (
 	"strings"
 )
 
+func ReadConf[T any](path string, marshaler Marshaler) (T, error) {
+	ctx := NewRawContext(path, marshaler, os.ModePerm, nil)
+	return GetConfContext[T](ctx)
+}
+
+func WriteConf[T any](path string, marshaler Marshaler, v T) (T, error) {
+	ctx := NewRawContext(path, marshaler, os.ModePerm, v)
+	return GetConfContext[T](ctx)
+}
+
+type RawContext struct {
+	context.Context
+	values map[any]any
+}
+
+func NewRawContext(path string, marshaler Marshaler, mode os.FileMode, value any) *RawContext {
+	return &RawContext{
+		Context: context.Background(),
+		values: map[any]any{
+			"name":      path,
+			"marshaler": marshaler,
+			"perm":      mode,
+			"value":     value,
+		},
+	}
+}
+
+func (c *RawContext) Value(key any) any {
+	return c.values[key]
+}
+
 // GetConfContext loads the configuration file into the given interface.
 func GetConfContext[T any](ctx context.Context) (T, error) {
 	v := new(T)
