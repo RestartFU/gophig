@@ -1,6 +1,7 @@
 package gophig
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 )
@@ -17,7 +18,8 @@ func (e UnsupportedExtensionError) Error() string {
 
 // IsUnsupportedExtensionErr returns true if the error is an UnsupportedExtensionError.
 func IsUnsupportedExtensionErr(err error) bool {
-	_, ok := err.(UnsupportedExtensionError)
+	var unsupportedExtensionError UnsupportedExtensionError
+	ok := errors.As(err, &unsupportedExtensionError)
 	return ok
 }
 

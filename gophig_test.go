@@ -56,3 +56,34 @@ func TestGophig_GetConf(t *testing.T) {
 		})
 	}
 }
+
+func TestGophig_SetConf(t *testing.T) {
+	for _, ext := range []string{
+		"json",
+		"toml",
+		"yaml",
+	} {
+		t.Run("sample marshals successfully into "+ext+" sample data", func(t *testing.T) {
+			marshaler, err := gophig.MarshalerFromExtension(ext)
+			require.NoError(t, err)
+
+			err = os.MkdirAll("tests/tmp", os.ModePerm)
+			require.NoError(t, err)
+			defer func() {
+				require.NoError(t, os.RemoveAll("tests/tmp"))
+			}()
+
+			g := gophig.NewGophig[Sample]("tests/tmp/sample."+ext, marshaler, os.ModePerm)
+			require.NotNil(t, g)
+
+			sample := Sample{
+				Name:    "jane",
+				Surname: "doe",
+				Age:     20,
+			}
+
+			err = g.SetConf(sample)
+			require.NoError(t, err)
+		})
+	}
+}
