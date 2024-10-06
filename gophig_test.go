@@ -42,7 +42,7 @@ func TestGophig_GetConf(t *testing.T) {
 			g := gophig.NewGophig[Sample]("tests/assets/sample."+ext, marshaler, os.ModePerm)
 			require.NotNil(t, g)
 
-			sample, err := g.ReadConf()
+			sample, err := g.LoadConf()
 			require.NoError(t, err)
 
 			require.Equal(t,
@@ -82,7 +82,7 @@ func TestGophig_SetConf(t *testing.T) {
 				Age:     20,
 			}
 
-			err = g.WriteConf(sample)
+			err = g.SaveConf(sample)
 			require.NoError(t, err)
 		})
 	}
