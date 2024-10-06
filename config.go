@@ -6,7 +6,7 @@ import (
 )
 
 // GetConfComplex loads the configuration file into the given interface.
-func GetConfComplex(name string, marshaler Marshaler, v interface{}) error {
+func GetConfComplex(name string, marshaler Marshaler, v any) error {
 	data, err := os.ReadFile(name)
 	if err != nil {
 		return err
@@ -15,7 +15,7 @@ func GetConfComplex(name string, marshaler Marshaler, v interface{}) error {
 }
 
 // SetConfComplex saves the given interface to the configuration file.
-func SetConfComplex(name string, marshaler Marshaler, v interface{}, perm fs.FileMode) error {
+func SetConfComplex(name string, marshaler Marshaler, v any, perm fs.FileMode) error {
 	data, err := marshaler.Marshal(v)
 	if err != nil {
 		return err
