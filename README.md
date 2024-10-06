@@ -9,18 +9,18 @@ go get github.com/restartfu/gophig
 
 You may create a new `*Gophig`:
 ```go
-type foo struct{
+type Foo struct{
    foo string `toml:"foo"`
    bar string `toml:"bar"`
 }
 
-g := gophig.NewGophig("./config", "toml", 0777)
+g := gophig.NewGophig[Foo]("./config.toml", gophig.TOMLMarshaler, os.ModePerm)
 ```
-Then you may use the method `SetConf(v interface{})`:
+Then you may use the method `WriteConf(v any)`:
 ```go
-myFoo := &foo{foo: "foo", bar: "bar"}
+myFooStruct := Foo{foo: "foo", bar: "bar"}
 
-if err := g.SetConf(myFoo);err != nil{
+if err := g.WriteConf(myFooStruct);err != nil{
    log.Fatalln(err)
 }
 
@@ -31,17 +31,15 @@ if err := g.SetConf(myFoo);err != nil{
    bar = "bar"
 */
 ```
-Or the method `GetConf(v interface{})`:
+Or the method `ReadConf[T any]() T`:
 ```go
 // If we assume that the output file content is the same as the example up there:
-
-var myFooStruct *foo
-
-if err := g.GetConf(foo);err != nil{
+myFooStruct, err := g.ReadConf(&myFooStruct)
+if err != nil {
    log.Fatalln(err)
 }
 
-log.Println(*foo)
+log.Println(foo)
 
 // Output:
 /* 
