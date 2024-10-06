@@ -25,13 +25,13 @@ func NewGophig[T any](name string, marshaler Marshaler, perm fs.FileMode) *Gophi
 	return g
 }
 
-// WriteConf saves the given interface to the configuration file.
-func (g *Gophig[T]) WriteConf(v T) error {
+// SaveConf saves the given interface to the configuration file.
+func (g *Gophig[T]) SaveConf(v T) error {
 	g.ctx.values["value"] = v
-	return WriteConfContext(g.ctx)
+	return SaveConfContext(g.ctx)
 }
 
-// ReadConf loads the configuration file into the given interface.
-func (g *Gophig[T]) ReadConf() (T, error) {
-	return GetConfContext[T](g.ctx)
+// LoadConf loads the configuration file into the given interface.
+func (g *Gophig[T]) LoadConf() (T, error) {
+	return LoadConfContext[T](g.ctx)
 }

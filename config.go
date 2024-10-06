@@ -8,14 +8,14 @@ import (
 	"strings"
 )
 
-func ReadConf[T any](path string, marshaler Marshaler) (T, error) {
-	ctx := newRawContext(path, marshaler, os.ModePerm, nil)
-	return GetConfContext[T](ctx)
+func SaveConf[T any](path string, marshaler Marshaler, v T) (T, error) {
+	ctx := newRawContext(path, marshaler, os.ModePerm, v)
+	return LoadConfContext[T](ctx)
 }
 
-func WriteConf[T any](path string, marshaler Marshaler, v T) (T, error) {
-	ctx := newRawContext(path, marshaler, os.ModePerm, v)
-	return GetConfContext[T](ctx)
+func LoadConf[T any](path string, marshaler Marshaler) (T, error) {
+	ctx := newRawContext(path, marshaler, os.ModePerm, nil)
+	return LoadConfContext[T](ctx)
 }
 
 type RawContext struct {
@@ -23,13 +23,13 @@ type RawContext struct {
 	values map[any]any
 }
 
-func newRawContext(path string, marshaler Marshaler, mode os.FileMode, value any) *RawContext {
+func newRawContext(name string, marshaler Marshaler, perm os.FileMode, value any) *RawContext {
 	return &RawContext{
 		Context: context.Background(),
 		values: map[any]any{
-			"name":      path,
+			"name":      name,
 			"marshaler": marshaler,
-			"perm":      mode,
+			"perm":      perm,
 			"value":     value,
 		},
 	}
@@ -39,8 +39,8 @@ func (c *RawContext) Value(key any) any {
 	return c.values[key]
 }
 
-// GetConfContext loads the configuration file into the given interface.
-func GetConfContext[T any](ctx context.Context) (T, error) {
+// LoadConfContext loads the configuration file into the given type.
+func LoadConfContext[T any](ctx context.Context) (T, error) {
 	v := new(T)
 	name, marshaler, err := extractContextValues(ctx)
 	if err != nil {
@@ -56,8 +56,8 @@ func GetConfContext[T any](ctx context.Context) (T, error) {
 	return *v, err
 }
 
-// WriteConfContext saves the given interface to the configuration file.
-func WriteConfContext(ctx context.Context) error {
+// SaveConfContext saves the given type to the configuration file.
+func SaveConfContext(ctx context.Context) error {
 	name, marshaler, err := extractContextValues(ctx)
 	if err != nil {
 		return err

@@ -10,8 +10,8 @@ go get github.com/restartfu/gophig
 You may create a new `*Gophig`:
 ```go
 type Foo struct{
-   foo string `toml:"foo"`
-   bar string `toml:"bar"`
+foo string `toml:"foo"`
+bar string `toml:"bar"`
 }
 
 g := gophig.NewGophig[Foo]("./config.toml", gophig.TOMLMarshaler, os.ModePerm)
@@ -20,7 +20,7 @@ Then you may use the method `WriteConf(v any)`:
 ```go
 myFooStruct := Foo{foo: "foo", bar: "bar"}
 
-if err := g.WriteConf(myFooStruct);err != nil{
+if err := g.SaveConf(myFooStruct);err != nil{
    log.Fatalln(err)
 }
 
@@ -34,15 +34,15 @@ if err := g.WriteConf(myFooStruct);err != nil{
 Or the method `ReadConf[T any]() T`:
 ```go
 // If we assume that the output file content is the same as the example up there:
-myFooStruct, err := g.ReadConf(&myFooStruct)
+myFooStruct, err := g.LoadConf(&myFooStruct)
 if err != nil {
-   log.Fatalln(err)
+log.Fatalln(err)
 }
 
 log.Println(foo)
 
 // Output:
-/* 
+/*
    {foo: "foo", bar: "bar"}
 */
 ```
