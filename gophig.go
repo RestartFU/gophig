@@ -20,7 +20,7 @@ func NewGophig[T any](name string, marshaler Marshaler, perm fs.FileMode) *Gophi
 		marshaler: marshaler,
 		perm:      perm,
 
-		ctx: NewRawContext(name, marshaler, perm, nil),
+		ctx: newRawContext(name, marshaler, perm, nil),
 	}
 	return g
 }
@@ -28,7 +28,7 @@ func NewGophig[T any](name string, marshaler Marshaler, perm fs.FileMode) *Gophi
 // WriteConf saves the given interface to the configuration file.
 func (g *Gophig[T]) WriteConf(v T) error {
 	g.ctx.values["value"] = v
-	return SetConfContext(g.ctx)
+	return WriteConfContext(g.ctx)
 }
 
 // ReadConf loads the configuration file into the given interface.

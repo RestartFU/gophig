@@ -9,12 +9,12 @@ import (
 )
 
 func ReadConf[T any](path string, marshaler Marshaler) (T, error) {
-	ctx := NewRawContext(path, marshaler, os.ModePerm, nil)
+	ctx := newRawContext(path, marshaler, os.ModePerm, nil)
 	return GetConfContext[T](ctx)
 }
 
 func WriteConf[T any](path string, marshaler Marshaler, v T) (T, error) {
-	ctx := NewRawContext(path, marshaler, os.ModePerm, v)
+	ctx := newRawContext(path, marshaler, os.ModePerm, v)
 	return GetConfContext[T](ctx)
 }
 
@@ -23,7 +23,7 @@ type RawContext struct {
 	values map[any]any
 }
 
-func NewRawContext(path string, marshaler Marshaler, mode os.FileMode, value any) *RawContext {
+func newRawContext(path string, marshaler Marshaler, mode os.FileMode, value any) *RawContext {
 	return &RawContext{
 		Context: context.Background(),
 		values: map[any]any{
@@ -56,8 +56,8 @@ func GetConfContext[T any](ctx context.Context) (T, error) {
 	return *v, err
 }
 
-// SetConfContext saves the given interface to the configuration file.
-func SetConfContext(ctx context.Context) error {
+// WriteConfContext saves the given interface to the configuration file.
+func WriteConfContext(ctx context.Context) error {
 	name, marshaler, err := extractContextValues(ctx)
 	if err != nil {
 		return err
