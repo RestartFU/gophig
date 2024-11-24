@@ -1,4 +1,4 @@
-module git.restartfu.com/restart/gophig
+module git.restartfu.com/restart/gophig.git
 
 go 1.20
 
