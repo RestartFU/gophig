@@ -2,7 +2,7 @@
 
 Gophig may be imported using `go get`:
 ```
-go get github.com/restartfu/gophig
+go get git.restartfu.com/restart/gophig.git
 ```
 
 ## Usage
