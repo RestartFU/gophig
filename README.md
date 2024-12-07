@@ -1,3 +1,5 @@
+# Mirror:
+⚠️ This is a [mirror](https://git.restartfu.com/restart/git-mirror) of [this repository](https://git.restartfu.com/restart/gophig)
 ## Getting Started
 
 Gophig may be imported using `go get`:
