@@ -12,8 +12,8 @@ go get git.restartfu.com/restart/gophig.git
 You may create a new `*Gophig`:
 ```go
 type Foo struct{
-		foo string `toml:"foo"`
-		bar string `toml:"bar"`
+	foo string `toml:"foo"`
+	bar string `toml:"bar"`
 }
 
 g := gophig.NewGophig[Foo]("./config.toml", gophig.TOMLMarshaler, os.ModePerm)
