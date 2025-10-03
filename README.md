@@ -1,50 +1,53 @@
-# Mirror:
-⚠️ This is a [mirror](https://git.restartfu.com/restart/git-mirror) of [this repository](https://git.restartfu.com/restart/gophig)
-## Getting Started
+# Gophig
 
-Gophig may be imported using `go get`:
-```
-go get git.restartfu.com/restart/gophig.git
-```
+Gophig is a simple configuration manager for Go projects. It supports marshaling and unmarshaling config files (e.g., TOML) into typed Go structs.
 
-## Usage
+# Installation
 
-You may create a new `*Gophig`:
+go get git.restartfu.com/restart/gophig
+
+# Usage
+
+Define your configuration struct:
+
 ```go
-type Foo struct{
-	foo string `toml:"foo"`
-	bar string `toml:"bar"`
+type Foo struct {
+	Foo string toml:"foo"
+	Bar string toml:"bar"
 }
+```
 
+# Create a new *Gophig instance:
+```go
 g := gophig.NewGophig[Foo]("./config.toml", gophig.TOMLMarshaler, os.ModePerm)
 ```
-Then you may use the method `WriteConf(v any)`:
+# Writing a Config
 ```go
-myFooStruct := Foo{foo: "foo", bar: "bar"}
+myFoo := Foo{Foo: "foo", Bar: "bar"}
 
-if err := g.WriteConf(myFooStruct); err != nil{
-   log.Fatalln(err)
+if err := g.WriteConf(myFoo); err != nil {
+log.Fatalln(err)
 }
-
-// Output file content:
-// ./config.toml
-/*
-   foo = "foo"
-   bar = "bar"
-*/
 ```
-Or the method `ReadConf[T any]() T`:
+
+This will generate a config.toml file with:
+```
+foo = "foo"
+bar = "bar"
+```
+# Reading a Config
+
 ```go
-// If we assume that the output file content is the same as the example up there:
-myFooStruct, err := g.ReadConf[Foo]()
+myFoo, err := g.ReadConf()
 if err != nil {
-	log.Fatalln(err)
+  log.Fatalln(err)
 }
 
-log.Println(foo)
+log.Println(myFoo)
+```
 
-// Output:
-/*
-   {foo: "foo", bar: "bar"}
-*/
+Output:
+
+```
+{Foo: "foo", Bar: "bar"}
 ```
