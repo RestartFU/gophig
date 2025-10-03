@@ -2,9 +2,11 @@ name: Go CI
 
 on:
   push:
-    branches: [main]
+    branches:
+      - "**" # runs on push to any branch
   pull_request:
-    branches: [main]
+    branches:
+      - "**" # runs on all PRs
 
 jobs:
   test:
