@@ -25,8 +25,8 @@ func IsUnsupportedExtensionErr(err error) bool {
 
 // Marshaler is an interface that can marshal and unmarshal data.
 type Marshaler interface {
-	Marshal(v interface{}) ([]byte, error)
-	Unmarshal(data []byte, v interface{}) error
+	Marshal(v any) ([]byte, error)
+	Unmarshal(data []byte, v any) error
 }
 
 // MarshalerFromExtension is a Marshaler that uses a file extension to determine which Marshaler to use.
@@ -39,6 +39,8 @@ func MarshalerFromExtension(ext string) (Marshaler, error) {
 		return JSONMarshaler{}, nil
 	case "yaml":
 		return YAMLMarshaler{}, nil
+	case "env":
+		return DotenvMarshaler{}, nil
 	}
 	return nil, UnsupportedExtensionError{ext}
 }

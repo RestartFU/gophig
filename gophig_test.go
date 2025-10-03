@@ -1,18 +1,19 @@
 package gophig_test
 
 import (
-	"github.com/restartfu/gophig"
-	"github.com/stretchr/testify/require"
 	"os"
 	"testing"
+
+	"github.com/restartfu/gophig"
+	"github.com/stretchr/testify/require"
 )
 
 type MockMarshaler struct{}
 
-func (m MockMarshaler) Marshal(interface{}) ([]byte, error) {
+func (m MockMarshaler) Marshal(any) ([]byte, error) {
 	return []byte{}, nil
 }
-func (MockMarshaler) Unmarshal([]byte, interface{}) error {
+func (MockMarshaler) Unmarshal([]byte, any) error {
 	return nil
 }
 
@@ -34,6 +35,7 @@ func TestGophig_GetConf(t *testing.T) {
 		"json",
 		"toml",
 		"yaml",
+		"env",
 	} {
 		t.Run("sample unmarshals successfully into "+ext+" sample struct", func(t *testing.T) {
 			marshaler, err := gophig.MarshalerFromExtension(ext)
@@ -62,6 +64,7 @@ func TestGophig_SetConf(t *testing.T) {
 		"json",
 		"toml",
 		"yaml",
+		"env",
 	} {
 		t.Run("sample marshals successfully into "+ext+" sample data", func(t *testing.T) {
 			marshaler, err := gophig.MarshalerFromExtension(ext)

@@ -90,7 +90,7 @@ func extractContextValues(ctx context.Context) (string, Marshaler, error) {
 	}
 
 	if len(missing) > 0 {
-		return "", marshaler, errors.New(fmt.Sprintf("missing required values in context: %s", strings.Join(missing, ",")))
+		return "", marshaler, fmt.Errorf("missing required values in context: %s", strings.Join(missing, ","))
 	}
 	return name, marshaler, nil
 }
