@@ -58,6 +58,9 @@ func LoadConfContext[T any](ctx context.Context) (T, error) {
 
 // SaveConfContext saves the given type to the configuration file.
 func SaveConfContext(ctx context.Context) error {
+	if ctx == nil {
+		return errors.New("context is nil")
+	}
 	name, marshaler, err := extractContextValues(ctx)
 	if err != nil {
 		return err
