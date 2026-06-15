@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/RestartFU/gophig/compare/v1.0.0...v1.1.0) (2026-06-15)
+
+
+### Features
+
+* support defaults for env expansion ([ee1ddc2](https://github.com/RestartFU/gophig/commit/ee1ddc24b28a056b03b542cd8e27792985400498))
+
 ## [1.0.0](https://github.com/RestartFU/gophig/compare/v0.1.0...v1.0.0) (2026-06-15)
 
 
