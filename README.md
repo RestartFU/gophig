@@ -73,8 +73,9 @@ Output:
 
 # Environment Variables
 
-Config values can reference environment variables with `${VAR}`. Expansion happens before unmarshaling.
+Config values can reference environment variables with `${VAR}`. Expansion happens before unmarshaling. Missing variables are left unchanged unless a default is provided with `${VAR:-default}`.
 
 ```toml
 host = "${APP_HOST}"
+port = "${APP_PORT:-8080}"
 ```

@@ -115,3 +115,65 @@ func TestGophig_LoadConfExpandsEnvironmentVariables(t *testing.T) {
 		})
 	}
 }
+
+func TestGophig_LoadConfPreservesMissingEnvironmentVariables(t *testing.T) {
+	const envName = "GOPHIG_MISSING_HOST_TEST_SHOULD_NOT_EXIST"
+	oldValue, wasSet := os.LookupEnv(envName)
+	require.NoError(t, os.Unsetenv(envName))
+	t.Cleanup(func() {
+		if wasSet {
+			require.NoError(t, os.Setenv(envName, oldValue))
+		}
+	})
+
+	path := t.TempDir() + "/config.json"
+	err := os.WriteFile(path, []byte(`{"Host":"${GOPHIG_MISSING_HOST_TEST_SHOULD_NOT_EXIST}"}`), 0o644)
+	require.NoError(t, err)
+
+	marshaler, err := gophig.MarshalerFromExtension("json")
+	require.NoError(t, err)
+
+	g := gophig.NewGophig[EnvSample](path, marshaler, os.ModePerm)
+	sample, err := g.LoadConf()
+	require.NoError(t, err)
+	require.Equal(t, "${"+envName+"}", sample.Host)
+}
+
+func TestGophig_LoadConfUsesDefaultForMissingEnvironmentVariables(t *testing.T) {
+	const envName = "GOPHIG_DEFAULT_HOST_TEST_SHOULD_NOT_EXIST"
+	oldValue, wasSet := os.LookupEnv(envName)
+	require.NoError(t, os.Unsetenv(envName))
+	t.Cleanup(func() {
+		if wasSet {
+			require.NoError(t, os.Setenv(envName, oldValue))
+		}
+	})
+
+	path := t.TempDir() + "/config.json"
+	err := os.WriteFile(path, []byte(`{"Host":"${GOPHIG_DEFAULT_HOST_TEST_SHOULD_NOT_EXIST:-localhost}"}`), 0o644)
+	require.NoError(t, err)
+
+	marshaler, err := gophig.MarshalerFromExtension("json")
+	require.NoError(t, err)
+
+	g := gophig.NewGophig[EnvSample](path, marshaler, os.ModePerm)
+	sample, err := g.LoadConf()
+	require.NoError(t, err)
+	require.Equal(t, "localhost", sample.Host)
+}
+
+func TestGophig_LoadConfEnvironmentVariableOverridesDefault(t *testing.T) {
+	t.Setenv("GOPHIG_DEFAULT_HOST", "production")
+
+	path := t.TempDir() + "/config.json"
+	err := os.WriteFile(path, []byte(`{"Host":"${GOPHIG_DEFAULT_HOST:-localhost}"}`), 0o644)
+	require.NoError(t, err)
+
+	marshaler, err := gophig.MarshalerFromExtension("json")
+	require.NoError(t, err)
+
+	g := gophig.NewGophig[EnvSample](path, marshaler, os.ModePerm)
+	sample, err := g.LoadConf()
+	require.NoError(t, err)
+	require.Equal(t, "production", sample.Host)
+}

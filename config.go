@@ -116,7 +116,17 @@ func expandEnv(data []byte) []byte {
 			break
 		}
 
-		out.WriteString(os.Getenv(s[:end]))
+		key, fallback, hasFallback := strings.Cut(s[:end], ":-")
+		if value, ok := os.LookupEnv(key); ok {
+			out.WriteString(value)
+		} else if hasFallback {
+			out.WriteString(fallback)
+		} else {
+			out.WriteString("${")
+			out.WriteString(key)
+			out.WriteString("}")
+		}
+
 		s = s[end+1:]
 	}
 
