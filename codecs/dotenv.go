@@ -1,4 +1,4 @@
-package gophig
+package codecs
 
 import (
 	"fmt"

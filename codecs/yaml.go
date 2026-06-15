@@ -1,4 +1,4 @@
-package gophig
+package codecs
 
 import (
 	"gopkg.in/yaml.v3"

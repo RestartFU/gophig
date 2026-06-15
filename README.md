@@ -4,29 +4,48 @@ Gophig is a simple configuration manager for Go projects. It supports marshaling
 
 # Installation
 
-go get git.restartfu.com/restart/gophig
+```sh
+go get github.com/restartfu/gophig
+```
+
+# Project structure
+
+```text
+.
+|-- config.go              # load/save functions
+|-- gophig.go              # typed config manager
+|-- marshal.go             # Marshaler interface and extension lookup
+|-- codecs/                # JSON, TOML, YAML, dotenv marshalers
+|-- tests/                 # external package tests and fixtures
+`-- examples/basic/        # runnable example
+```
 
 # Usage
 
 Define your configuration struct:
 
 ```go
+import (
+	"github.com/restartfu/gophig"
+	"github.com/restartfu/gophig/codecs"
+)
+
 type Foo struct {
-	Foo string toml:"foo"
-	Bar string toml:"bar"
+	Foo string `toml:"foo"`
+	Bar string `toml:"bar"`
 }
 ```
 
 # Create a new *Gophig instance:
 ```go
-g := gophig.NewGophig[Foo]("./config.toml", gophig.TOMLMarshaler, os.ModePerm)
+g := gophig.NewGophig[Foo]("./config.toml", codecs.TOMLMarshaler{}, os.ModePerm)
 ```
 # Writing a Config
 ```go
 myFoo := Foo{Foo: "foo", Bar: "bar"}
 
-if err := g.WriteConf(myFoo); err != nil {
-log.Fatalln(err)
+if err := g.SaveConf(myFoo); err != nil {
+	log.Fatalln(err)
 }
 ```
 
@@ -38,7 +57,7 @@ bar = "bar"
 # Reading a Config
 
 ```go
-myFoo, err := g.ReadConf()
+myFoo, err := g.LoadConf()
 if err != nil {
   log.Fatalln(err)
 }
@@ -50,4 +69,12 @@ Output:
 
 ```
 {Foo: "foo", Bar: "bar"}
+```
+
+# Environment Variables
+
+Config values can reference environment variables with `${VAR}`. Expansion happens before unmarshaling.
+
+```toml
+host = "${APP_HOST}"
 ```

@@ -1,4 +1,4 @@
-package gophig
+package codecs
 
 import (
 	"github.com/pelletier/go-toml/v2"

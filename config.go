@@ -52,7 +52,7 @@ func LoadConfContext[T any](ctx context.Context) (T, error) {
 		return *v, err
 	}
 
-	err = marshaler.Unmarshal(data, v)
+	err = marshaler.Unmarshal(expandEnv(data), v)
 	return *v, err
 }
 
@@ -93,4 +93,32 @@ func extractContextValues(ctx context.Context) (string, Marshaler, error) {
 		return "", marshaler, fmt.Errorf("missing required values in context: %s", strings.Join(missing, ","))
 	}
 	return name, marshaler, nil
+}
+
+func expandEnv(data []byte) []byte {
+	s := string(data)
+	var out strings.Builder
+
+	for {
+		start := strings.Index(s, "${")
+		if start == -1 {
+			out.WriteString(s)
+			break
+		}
+
+		out.WriteString(s[:start])
+		s = s[start+2:]
+
+		end := strings.IndexByte(s, '}')
+		if end == -1 {
+			out.WriteString("${")
+			out.WriteString(s)
+			break
+		}
+
+		out.WriteString(os.Getenv(s[:end]))
+		s = s[end+1:]
+	}
+
+	return []byte(out.String())
 }

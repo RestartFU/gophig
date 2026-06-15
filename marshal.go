@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+
+	"github.com/restartfu/gophig/codecs"
 )
 
 // UnsupportedExtensionError is an error that is returned when a file extension is not supported.
@@ -34,13 +36,13 @@ func MarshalerFromExtension(ext string) (Marshaler, error) {
 	ext = strings.ToLower(ext)
 	switch ext {
 	case "toml":
-		return TOMLMarshaler{}, nil
+		return codecs.TOMLMarshaler{}, nil
 	case "json":
-		return JSONMarshaler{}, nil
+		return codecs.JSONMarshaler{}, nil
 	case "yaml":
-		return YAMLMarshaler{}, nil
+		return codecs.YAMLMarshaler{}, nil
 	case "env":
-		return DotenvMarshaler{}, nil
+		return codecs.DotenvMarshaler{}, nil
 	}
 	return nil, UnsupportedExtensionError{ext}
 }

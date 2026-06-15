@@ -30,6 +30,10 @@ type Sample struct {
 	Age     int    `json,toml,yaml:"age"`
 }
 
+type EnvSample struct {
+	Host string `env:"HOST"`
+}
+
 func TestGophig_GetConf(t *testing.T) {
 	for _, ext := range []string{
 		"json",
@@ -41,7 +45,7 @@ func TestGophig_GetConf(t *testing.T) {
 			marshaler, err := gophig.MarshalerFromExtension(ext)
 			require.NoError(t, err)
 
-			g := gophig.NewGophig[Sample]("tests/assets/sample."+ext, marshaler, os.ModePerm)
+			g := gophig.NewGophig[Sample]("assets/sample."+ext, marshaler, os.ModePerm)
 			require.NotNil(t, g)
 
 			sample, err := g.LoadConf()
@@ -70,13 +74,7 @@ func TestGophig_SetConf(t *testing.T) {
 			marshaler, err := gophig.MarshalerFromExtension(ext)
 			require.NoError(t, err)
 
-			err = os.MkdirAll("tests/tmp", os.ModePerm)
-			require.NoError(t, err)
-			defer func() {
-				require.NoError(t, os.RemoveAll("tests/tmp"))
-			}()
-
-			g := gophig.NewGophig[Sample]("tests/tmp/sample."+ext, marshaler, os.ModePerm)
+			g := gophig.NewGophig[Sample](t.TempDir()+"/sample."+ext, marshaler, os.ModePerm)
 			require.NotNil(t, g)
 
 			sample := Sample{
@@ -87,6 +85,33 @@ func TestGophig_SetConf(t *testing.T) {
 
 			err = g.SaveConf(sample)
 			require.NoError(t, err)
+		})
+	}
+}
+
+func TestGophig_LoadConfExpandsEnvironmentVariables(t *testing.T) {
+	t.Setenv("GOPHIG_TEST_HOST", "localhost")
+
+	files := map[string]string{
+		"json": `{"Host":"${GOPHIG_TEST_HOST}"}`,
+		"toml": `Host = '${GOPHIG_TEST_HOST}'`,
+		"yaml": `host: ${GOPHIG_TEST_HOST}`,
+		"env":  `HOST=${GOPHIG_TEST_HOST}`,
+	}
+
+	for ext, contents := range files {
+		t.Run("expands "+ext+" config values", func(t *testing.T) {
+			marshaler, err := gophig.MarshalerFromExtension(ext)
+			require.NoError(t, err)
+
+			path := t.TempDir() + "/config." + ext
+			err = os.WriteFile(path, []byte(contents), 0o644)
+			require.NoError(t, err)
+
+			g := gophig.NewGophig[EnvSample](path, marshaler, os.ModePerm)
+			sample, err := g.LoadConf()
+			require.NoError(t, err)
+			require.Equal(t, "localhost", sample.Host)
 		})
 	}
 }
